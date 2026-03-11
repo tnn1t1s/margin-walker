@@ -20,12 +20,14 @@ class MarginWalkerApp(App):
 
     BINDINGS = [
         Binding("ctrl+c", "quit", "Quit", show=False),
+        Binding("f5", "play", "Play", show=True),
+        Binding("f6", "stop", "Stop", show=True),
     ]
 
     def __init__(self):
         super().__init__()
-        self._registry = build_registry()
-        self._agent = DefaultAgent(self._registry)
+        self._tool_registry = build_registry()
+        self._agent = DefaultAgent(self._tool_registry)
         self._llm_agent = None
 
     def compose(self) -> ComposeResult:
@@ -89,10 +91,30 @@ class MarginWalkerApp(App):
             output.write(f"[red]LLM error: {e}[/red]")
         self._refresh_status()
 
+    def action_play(self) -> None:
+        output = self.query_one("#output", RichLog)
+        try:
+            from ..tools import transport
+            transport.play()
+            output.write("[green]▶ Playing[/green]")
+        except Exception as e:
+            output.write(f"[red]Play error: {e}[/red]")
+        self._refresh_status()
+
+    def action_stop(self) -> None:
+        output = self.query_one("#output", RichLog)
+        try:
+            from ..tools import transport
+            transport.stop()
+            output.write("[green]■ Stopped[/green]")
+        except Exception as e:
+            output.write(f"[red]Stop error: {e}[/red]")
+        self._refresh_status()
+
     def _get_llm_agent(self):
         if self._llm_agent is None:
             from .agents.llm import LLMAgent
-            self._llm_agent = LLMAgent(self._registry)
+            self._llm_agent = LLMAgent(self._tool_registry)
         return self._llm_agent
 
 

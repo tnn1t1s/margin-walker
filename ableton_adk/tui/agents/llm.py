@@ -13,7 +13,7 @@ class LLMAgent:
 
     def run(self, text: str) -> str:
         from dotenv import load_dotenv
-        load_dotenv(Path(__file__).resolve().parent.parent.parent / "ableton-config" / ".env")
+        load_dotenv(Path(__file__).resolve().parent.parent.parent.parent / ".env")
 
         from google.adk.models.registry import _llm_registry_dict
         from google.adk.models.lite_llm import LiteLlm

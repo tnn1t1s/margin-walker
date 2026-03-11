@@ -1,7 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).resolve().parent / "ableton-config" / ".env")
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from google.adk.agents import SequentialAgent
 from google.adk.models.registry import _llm_registry_dict

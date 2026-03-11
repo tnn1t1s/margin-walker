@@ -2,7 +2,7 @@ set dotenv-load := false
 
 PYTHON := ".venv/bin/python"
 ADK := ".venv/bin/adk"
-REMOTE_SCRIPTS := ~/Music/Ableton/User\ Library/Remote\ Scripts
+REMOTE_SCRIPTS := env("HOME") / "Music/Ableton/User Library/Remote Scripts"
 
 setup-venv:
     python3 -m venv .venv

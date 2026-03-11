@@ -75,6 +75,37 @@ From simple one-liners to complex production tasks — the agents figure out whi
   → adjusts track volumes for depth: drums forward, chords way back
 ```
 
+## TUI
+
+Terminal UI for direct Ableton control — slash commands, keyboard shortcuts, and AI chat.
+
+![margin-walker TUI + Ableton Live](docs/tui-screenshot.png)
+
+```bash
+just tui
+```
+
+| Command | Alias | Description |
+|---------|-------|-------------|
+| `/play` | `/p` | Start playback |
+| `/stop` | `/x` | Stop playback |
+| `/tempo 128` | `/bpm` | Get/set tempo |
+| `/mute kick` | `/m` | Mute track by name |
+| `/solo 909` | `/s` | Solo track |
+| `/vol bass 0.7` | `/v` | Set track volume |
+| `/tracks` | `/ls` | List all tracks |
+| `/fire 0` | `/f` | Fire scene |
+| `/launch bass 2` | `/l` | Fire clip |
+| `/devices chord1` | `/d` | List devices on track |
+| `/status` | `/st` | Song info |
+| `/help` | `/h` | All commands |
+
+**Keyboard shortcuts:** F5 play, F6 stop, Ctrl+C quit
+
+**Free text** (no `/` prefix) routes to the AI agent — same pipeline as `just run`.
+
+Supports **unix-style pipes**: `/mute noise1 | /mute noise2 | /solo 909`
+
 ## Architecture
 
 ```
@@ -89,6 +120,9 @@ margin-walker/
 │   │   ├── scene        # create, fire, duplicate
 │   │   ├── mixer        # master, returns, sends, crossfader
 │   │   └── song         # info, quantization, groove
+│   ├── tui/             # Textual terminal UI
+│   │   ├── agents/      # Command + LLM routing
+│   │   └── widgets/     # Status bar, command input
 │   ├── prompts/         # Agent instructions
 │   └── lib/
 │       └── osc_client   # UDP client (send:11000, recv:11001)
