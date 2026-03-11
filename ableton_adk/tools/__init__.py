@@ -23,8 +23,9 @@ from .scene import (
     fire_scene, set_scene_name, duplicate_scene,
 )
 from .mixer import (
-    get_master_volume, set_master_volume, get_return_track_count,
-    set_send_level, get_send_level, set_crossfader,
+    get_master_volume, set_master_volume, get_master_pan, get_master_devices,
+    get_crossfader, set_crossfader, get_return_track_count, get_return_track_names,
+    get_return_track_devices, set_return_volume, set_send_level, get_send_level,
 )
 from .song import (
     get_song_info, set_quantization, set_groove_amount,
@@ -79,10 +80,16 @@ TOOL_DESCRIPTIONS = {
     "duplicate_scene": "Duplicate a scene.",
     "get_master_volume": "Get master volume.",
     "set_master_volume": "Set master volume.",
+    "get_master_pan": "Get master panning.",
+    "get_master_devices": "Get master track devices.",
+    "get_crossfader": "Get crossfader position.",
+    "set_crossfader": "Set crossfader position.",
     "get_return_track_count": "Get return track count.",
+    "get_return_track_names": "Get return track names.",
+    "get_return_track_devices": "Get return track devices.",
+    "set_return_volume": "Set return track volume.",
     "set_send_level": "Set send level.",
     "get_send_level": "Get send level.",
-    "set_crossfader": "Set crossfader position.",
     "get_song_info": "Get Live set overview.",
     "set_quantization": "Set launch quantization.",
     "set_groove_amount": "Set groove amount.",
@@ -96,7 +103,7 @@ GROUPS = {
     "clip": [create_clip, delete_clip, add_notes, get_notes, remove_notes, fire_clip, stop_clip, duplicate_clip, set_clip_name, set_clip_loop],
     "device": [get_device_count, get_device_names, get_device_parameters, set_device_parameter, set_device_enabled],
     "scene": [get_scene_count, get_scene_names, create_scene, delete_scene, fire_scene, set_scene_name, duplicate_scene],
-    "mixer": [get_master_volume, set_master_volume, get_return_track_count, set_send_level, get_send_level, set_crossfader],
+    "mixer": [get_master_volume, set_master_volume, get_master_pan, get_master_devices, get_crossfader, set_crossfader, get_return_track_count, get_return_track_names, get_return_track_devices, set_return_volume, set_send_level, get_send_level],
     "song": [get_song_info, set_quantization, set_groove_amount, jump_to_time, get_current_time],
 }
 

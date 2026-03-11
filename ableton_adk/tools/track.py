@@ -19,12 +19,8 @@ def get_track_names() -> dict:
     Returns:
         Dict with list of track names and their indices.
     """
-    count_result = get_client().query("/live/song/get/num_tracks")
-    count = count_result[0] if count_result else 0
-    tracks = []
-    for i in range(count):
-        result = get_client().query("/live/track/get/name", i)
-        tracks.append({"index": i, "name": result[0] if result else f"Track {i}"})
+    result = get_client().query("/live/song/get/track_names")
+    tracks = [{"index": i, "name": name} for i, name in enumerate(result)]
     return {"tracks": tracks}
 
 
@@ -171,10 +167,10 @@ def get_track_info(track_index: int) -> dict:
     pan = c.query("/live/track/get/panning", track_index)
     return {
         "track_index": track_index,
-        "name": name[0] if name else None,
-        "armed": bool(arm[0]) if arm else False,
-        "muted": bool(mute[0]) if mute else False,
-        "solo": bool(solo[0]) if solo else False,
-        "volume": vol[0] if vol else None,
-        "pan": pan[0] if pan else None,
+        "name": name[1] if len(name) > 1 else None,
+        "armed": bool(arm[1]) if len(arm) > 1 else False,
+        "muted": bool(mute[1]) if len(mute) > 1 else False,
+        "solo": bool(solo[1]) if len(solo) > 1 else False,
+        "volume": vol[1] if len(vol) > 1 else None,
+        "pan": pan[1] if len(pan) > 1 else None,
     }

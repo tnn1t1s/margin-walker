@@ -13,7 +13,7 @@ def get_device_count(track_index: int) -> dict:
         Dict with device count.
     """
     result = get_client().query("/live/track/get/num_devices", track_index)
-    return {"track_index": track_index, "count": result[0] if result else 0}
+    return {"track_index": track_index, "count": result[1] if len(result) > 1 else 0}
 
 
 def get_device_names(track_index: int) -> dict:
@@ -25,12 +25,8 @@ def get_device_names(track_index: int) -> dict:
     Returns:
         Dict with list of device names and indices.
     """
-    count_result = get_client().query("/live/track/get/num_devices", track_index)
-    count = count_result[0] if count_result else 0
-    devices = []
-    for i in range(count):
-        result = get_client().query("/live/device/get/name", track_index, i)
-        devices.append({"index": i, "name": result[0] if result else f"Device {i}"})
+    result = get_client().query("/live/track/get/devices/name", track_index)
+    devices = [{"index": i, "name": name} for i, name in enumerate(result[1:])]
     return {"track_index": track_index, "devices": devices}
 
 
@@ -45,20 +41,19 @@ def get_device_parameters(track_index: int, device_index: int) -> dict:
         Dict with list of parameter names, values, min, max.
     """
     c = get_client()
-    num_params = c.query("/live/device/get/num_parameters", track_index, device_index)
-    count = num_params[0] if num_params else 0
+    names = c.query("/live/device/get/parameters/name", track_index, device_index)
+    values = c.query("/live/device/get/parameters/value", track_index, device_index)
+    mins = c.query("/live/device/get/parameters/min", track_index, device_index)
+    maxs = c.query("/live/device/get/parameters/max", track_index, device_index)
+    n_skip = 2
     params = []
-    for i in range(count):
-        name = c.query("/live/device/get/parameter/name", track_index, device_index, i)
-        value = c.query("/live/device/get/parameter/value", track_index, device_index, i)
-        pmin = c.query("/live/device/get/parameter/min", track_index, device_index, i)
-        pmax = c.query("/live/device/get/parameter/max", track_index, device_index, i)
+    for i in range(len(names) - n_skip):
         params.append({
             "index": i,
-            "name": name[0] if name else f"Param {i}",
-            "value": value[0] if value else None,
-            "min": pmin[0] if pmin else None,
-            "max": pmax[0] if pmax else None,
+            "name": names[n_skip + i] if n_skip + i < len(names) else f"Param {i}",
+            "value": values[n_skip + i] if n_skip + i < len(values) else None,
+            "min": mins[n_skip + i] if n_skip + i < len(mins) else None,
+            "max": maxs[n_skip + i] if n_skip + i < len(maxs) else None,
         })
     return {"track_index": track_index, "device_index": device_index, "parameters": params}
 

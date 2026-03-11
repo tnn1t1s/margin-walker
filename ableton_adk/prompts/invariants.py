@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-CONFIG_DIR = Path(__file__).resolve().parent.parent / "ableton-config"
+CONFIG_DIR = Path(__file__).resolve().parent.parent.parent / "ableton-config"
 
 
 def _load_config_text(filename: str) -> str:

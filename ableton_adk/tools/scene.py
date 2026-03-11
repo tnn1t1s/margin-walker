@@ -19,12 +19,8 @@ def get_scene_names() -> dict:
     Returns:
         Dict with list of scene names and indices.
     """
-    count_result = get_client().query("/live/song/get/num_scenes")
-    count = count_result[0] if count_result else 0
-    scenes = []
-    for i in range(count):
-        result = get_client().query("/live/scene/get/name", i)
-        scenes.append({"index": i, "name": result[0] if result else f"Scene {i}"})
+    result = get_client().query("/live/song/get/scenes/name")
+    scenes = [{"index": i, "name": name} for i, name in enumerate(result)]
     return {"scenes": scenes}
 
 
