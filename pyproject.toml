@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ableton-adk"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.0",
+    "litellm",
+    "python-dotenv>=1.0.0",
+    "python-osc>=1.8.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio"]
+
+[tool.setuptools]
+package-dir = {"ableton_adk" = "ableton_adk"}
+packages = [
+    "ableton_adk",
+    "ableton_adk.agents",
+    "ableton_adk.tools",
+    "ableton_adk.prompts",
+    "ableton_adk.lib",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
