@@ -12,6 +12,7 @@ from .widgets.command_input import CommandInput
 from .widgets.status_bar import StatusBar
 from .agents import ToolRegistry, DefaultAgent
 from .commands import build_registry
+from .macros import MacroStore
 
 
 class MarginWalkerApp(App):
@@ -27,7 +28,10 @@ class MarginWalkerApp(App):
     def __init__(self):
         super().__init__()
         self._tool_registry = build_registry()
-        self._agent = DefaultAgent(self._tool_registry)
+        reserved = set(self._tool_registry.list_commands())
+        self._macro_store = MacroStore(reserved)
+        self._tool_registry._macro_store = self._macro_store
+        self._agent = DefaultAgent(self._tool_registry, self._macro_store)
         self._llm_agent = None
 
     def compose(self) -> ComposeResult:
@@ -71,6 +75,12 @@ class MarginWalkerApp(App):
 
         if text.startswith("/"):
             output.write(f"[dim]> {text}[/dim]")
+
+            stripped = text.lstrip("/").strip()
+            if stripped.startswith("save "):
+                self._handle_save(stripped[5:].strip(), output)
+                return
+
             resp = await self._agent.process(text)
             style = "[red]" if resp.error else "[green]"
             output.write(f"{style}{resp.message}[/]")
@@ -90,6 +100,23 @@ class MarginWalkerApp(App):
         except Exception as e:
             output.write(f"[red]LLM error: {e}[/red]")
         self._refresh_status()
+
+    def _handle_save(self, name: str, output: RichLog):
+        if not name:
+            output.write("[red]Usage: /save <name>[/red]")
+            return
+        if not self._llm_agent:
+            output.write("[red]No LLM session yet — run a free-text command first[/red]")
+            return
+        prompt, steps = self._llm_agent.get_last_sequence()
+        if not steps:
+            output.write("[red]No tool calls to save — run a free-text command first[/red]")
+            return
+        err = self._macro_store.save(name, prompt, steps)
+        if err:
+            output.write(f"[red]{err}[/red]")
+        else:
+            output.write(f"[green]Saved macro '{name}' ({len(steps)} steps)[/green]")
 
     def action_play(self) -> None:
         output = self.query_one("#output", RichLog)

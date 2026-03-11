@@ -10,8 +10,15 @@ from .base import BaseAgent, ToolRegistry, AgentResponse
 class LLMAgent:
     def __init__(self, registry: ToolRegistry):
         self._registry = registry
+        self._last_tool_calls: list[dict] = []
+        self._last_prompt: str = ""
+
+    def get_last_sequence(self) -> tuple[str, list[dict]]:
+        return self._last_prompt, list(self._last_tool_calls)
 
     def run(self, text: str) -> str:
+        self._last_tool_calls = []
+        self._last_prompt = text
         from dotenv import load_dotenv
         load_dotenv(Path(__file__).resolve().parent.parent.parent.parent / ".env")
 
@@ -49,6 +56,10 @@ class LLMAgent:
                                 parts.append(part.text)
                             if part.function_call:
                                 parts.append(f"  → {part.function_call.name}({dict(part.function_call.args)})")
+                                self._last_tool_calls.append({
+                                    "function_name": part.function_call.name,
+                                    "args": dict(part.function_call.args),
+                                })
 
             loop.run_until_complete(collect())
             return "\n".join(parts) if parts else "No response."

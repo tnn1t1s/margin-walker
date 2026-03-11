@@ -45,6 +45,12 @@ def build_registry() -> ToolRegistry:
     # meta
     reg.register("help", lambda: _help(reg), ["h", "?"])
 
+    # macro management (handlers set later via set_macro_store)
+    reg._macro_store = None
+    reg.register("macros", lambda: _macros(reg._macro_store))
+    reg.register("macro-delete", lambda *a: _macro_delete(reg._macro_store, *a))
+    reg.register("macro-show", lambda *a: _macro_show(reg._macro_store, *a))
+
     return reg
 
 
@@ -168,3 +174,43 @@ def _devices(*args):
 def _help(reg: ToolRegistry) -> str:
     cmds = reg.list_commands()
     return "Commands: " + " ".join(f"/{c}" for c in cmds)
+
+
+def _macros(store) -> str:
+    if not store:
+        return "Macro store not initialized"
+    macros = store.list()
+    if not macros:
+        return "No saved macros"
+    lines = []
+    for m in macros:
+        prompt = f' — "{m.created_from}"' if m.created_from else ""
+        lines.append(f"{m.name} ({len(m.steps)} steps){prompt}")
+    return "\n".join(lines)
+
+
+def _macro_delete(store, *args) -> str:
+    if not store:
+        return "Macro store not initialized"
+    if not args:
+        return "Usage: /macro-delete <name>"
+    name = args[0]
+    if store.delete(name):
+        return f"Deleted macro '{name}'"
+    return f"No macro named '{name}'"
+
+
+def _macro_show(store, *args) -> str:
+    if not store:
+        return "Macro store not initialized"
+    if not args:
+        return "Usage: /macro-show <name>"
+    macro = store.get(args[0])
+    if not macro:
+        return f"No macro named '{args[0]}'"
+    lines = [f"Macro: {macro.name}"]
+    if macro.created_from:
+        lines.append(f'Prompt: "{macro.created_from}"')
+    for i, step in enumerate(macro.steps, 1):
+        lines.append(f"  {i}. {step.function_name}({step.args})")
+    return "\n".join(lines)

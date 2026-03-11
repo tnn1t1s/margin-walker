@@ -106,6 +106,25 @@ just tui
 
 Supports **unix-style pipes**: `/mute noise1 | /mute noise2 | /solo 909`
 
+### Macros
+
+Capture LLM tool sequences as instant slash commands — no cloud inference on replay.
+
+```
+> mute all tracks except the chords        ← LLM figures it out
+> /save chords-mute                         ← capture those tool calls
+> /chords-mute                              ← instant replay, no LLM
+```
+
+| Command | Description |
+|---------|-------------|
+| `/save <name>` | Save last LLM tool calls as a macro |
+| `/macros` | List saved macros |
+| `/macro-show <name>` | Show macro steps |
+| `/macro-delete <name>` | Delete a macro |
+
+Macros persist across sessions in `~/.margin-walker/macros.json`. See [MACROS.md](MACROS.md) for the full guide.
+
 ## Architecture
 
 ```

@@ -3,6 +3,10 @@ from .base import BaseAgent, ToolRegistry, AgentResponse
 
 
 class DefaultAgent(BaseAgent):
+    def __init__(self, registry: ToolRegistry, macro_store=None):
+        super().__init__(registry)
+        self._macro_store = macro_store
+
     async def process(self, text: str) -> AgentResponse:
         text = text.lstrip("/").strip()
         if not text:
@@ -25,6 +29,15 @@ class DefaultAgent(BaseAgent):
             msg = self._format_result(cmd, result)
             return AgentResponse(message=msg, tool_calls=[{"tool": cmd, "args": args}])
         except KeyError:
+            if self._macro_store and self._macro_store.has(cmd):
+                results = self._macro_store.execute(cmd)
+                parts = []
+                for r in results:
+                    if r["ok"]:
+                        parts.append(f"{r['function']} → ok")
+                    else:
+                        parts.append(f"{r['function']} → {r['error']}")
+                return AgentResponse(message=" | ".join(parts))
             return AgentResponse(message=f"Unknown: /{cmd}. Type /help for commands.", error=True)
         except Exception as e:
             return AgentResponse(message=f"Error: {e}", error=True)
