@@ -9,6 +9,72 @@ Composer (Sonnet) → Producer (Sonnet) → Mixer (Haiku)
     plan               execute             mix
 ```
 
+## Examples
+
+From simple one-liners to complex production tasks — the agents figure out which tools to call.
+
+### Basic — single tool calls
+
+```
+"mute the kick"
+"set the tempo to 130"
+"solo the 909"
+"what tracks are in this set?"
+"stop playback"
+```
+
+### Intermediate — multi-step operations
+
+```
+"send the hats to the reverb bus at about 30%"
+  → finds the 909 track index
+  → finds which return track is the reverb bus
+  → sets send level to 0.3
+
+"pan the three chord tracks hard left, center, and hard right"
+  → identifies tracks 5, 6, 7 as chord tracks
+  → sets panning to -1.0, 0.0, 1.0
+
+"create a new MIDI track called 'Sub Bass' and arm it for recording"
+  → creates MIDI track
+  → renames it
+  → arms it
+
+"bypass all the effects on the noise tracks but keep the compressors"
+  → identifies noise tracks (0, 1)
+  → iterates devices on each
+  → disables all except Compressor
+```
+
+### Advanced — compositional tasks
+
+```
+"write a four-on-the-floor kick pattern at 124bpm, 1 bar loop"
+  → creates clip on the 909 track, scene 0, length 4.0
+  → adds kick notes (pitch 36) at beats 0, 1, 2, 3
+  → sets loop points
+
+"add a dub chord stab on beat 2 and 4 — Cm7, velocity 70, short and staccato"
+  → finds a chord track
+  → creates clip
+  → adds notes: C3, Eb3, G3, Bb3 at beats 1.0 and 3.0
+  → duration 0.25 (sixteenth), velocity 70
+
+"build an 8-bar arrangement: drums only for 4 bars, then bring in bass,
+ then add chords at bar 6 with a filter sweep"
+  → creates scenes for each section
+  → duplicates/creates clips across scenes
+  → unmutes tracks progressively per scene
+  → adjusts Auto Filter parameters over the last 2 bars
+
+"mix this like a Basic Channel record — everything dark and submerged,
+ heavy reverb sends, roll off everything above 5k"
+  → sets EQ Eight high shelf on all tracks around 5kHz
+  → increases send levels to reverb bus (return B) to ~0.5-0.7
+  → pulls master volume to 0.75
+  → adjusts track volumes for depth: drums forward, chords way back
+```
+
 ## Architecture
 
 ```
