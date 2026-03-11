@@ -21,6 +21,9 @@ update-osc:
     git submodule update --remote AbletonOSC
     @echo "AbletonOSC updated. Restart Ableton to pick up changes."
 
+tui:
+    {{PYTHON}} -m ableton_adk.tui
+
 run:
     {{ADK}} run .
 

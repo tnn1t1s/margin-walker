@@ -1,0 +1,22 @@
+Screen {
+    layout: vertical;
+}
+
+#status {
+    dock: top;
+    height: 1;
+    background: $accent;
+    color: $text;
+}
+
+#output {
+    height: 1fr;
+    border: round $accent;
+    background: $surface;
+}
+
+#command {
+    dock: bottom;
+    height: 3;
+    border: round $primary;
+}

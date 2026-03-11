@@ -11,6 +11,7 @@ dependencies = [
     "litellm",
     "python-dotenv>=1.0.0",
     "python-osc>=1.8.0",
+    "textual>=3.0.0",
 ]
 
 [project.optional-dependencies]
@@ -24,6 +25,9 @@ packages = [
     "ableton_adk.tools",
     "ableton_adk.prompts",
     "ableton_adk.lib",
+    "ableton_adk.tui",
+    "ableton_adk.tui.agents",
+    "ableton_adk.tui.widgets",
 ]
 
 [tool.pytest.ini_options]
